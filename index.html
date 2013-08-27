@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet">
+		<script type="text/javascript">
+			(function(){
+				window.onload = function(){
+					
+					//función constructora del prototipo
+					var AJAX = function(){
+						this.httpRequest;
+						
+						//http://es.wikipedia.org/wiki/XMLHttpRequest
+						if(window.XMLHttpRequest){
+							console.log("Objeto XMLHttpRequest creado");
+							this.httpRequest = new XMLHttpRequest();
+						}else if(window.ActiveXObject){
+							console.log("Objeto ActiveXObject creado");
+							try{
+								this.httpRequest = new ActiveXObject("MSXML2.XMLHTTP");
+							}catch(e){
+								console.log(e.message);
+								try{
+									 this.httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+								}catch(e){
+									console.log(e.message);
+								}
+							}
+						}
+						
+						if(!this.httpRequest){
+							console.log("No se pudo crear el objeto XMLHttpRequest");
+							return null;
+						}
+						
+						
+					}
+					
+					AJAX.prototype.requestText = function(url, func){
+						this.httpRequest.open('GET', url, true);
+						this.httpRequest.send(null);
+						
+						//Se define esta condición debido a que al ejecutar la función request
+						this.httpRequest.onreadystatechange = function(){
+							//this dentro de la función es this.httpRequest
+							if(this.readyState == 4 && this.status == 200){
+								func(this.responseText);
+							}
+						};
+					};
+
+					AJAX.prototype.requestXML = function(url, func){
+						this.httpRequest.open('GET', url, true);
+						this.httpRequest.send(null);
+						this.httpRequest.onreadystatechange = function(){
+							if(this.readyState == 4 && this.status == 200){
+								func(this.responseXML);
+							}
+						};
+					};
+					
+					var tipoPeticion = document.getElementById("tipo-peticion");
+					var btnPedirDatos = document.getElementById("btn-pedir-datos");
+					var ajax = new AJAX();
+					
+					ajax.requestXML('personal.xml', function(response){
+						var xmlDocument = response.documentElement;
+						console.log(xmlDocument);
+					});
+					
+					btnPedirDatos.onclick = function(){
+						switch (tipoPeticion[tipoPeticion.selectedIndex].value){
+							case "txt":
+								ajax.requestText('lorem.txt', function(response){
+									alert(response);
+								})
+								break;
+							case "xml":
+								break;
+							case "php":
+								
+						}
+					};
+				
+				};
+			})();
+		</script>
+		<title></title>
+	</head>
+	<body>
+		<section id="wrapper">
+			<div>
+				<fieldset>
+					<legend>Ejemplo de una petición AJAX</legend>
+					<label for="tipo-peticion">Peticion a:</label>
+					<select id="tipo-peticion">
+						<option value="txt">Archivo de texto</option>
+						<option value="xml">Archivo XML</option>
+						<option value="php">php</option>
+					</select>
+					<button id="btn-pedir-datos">Hacer petición</button>
+				</fieldset>
+			</div>
+		<div id="display-result"><div>
+		</section>
+	</body>
+</html>
