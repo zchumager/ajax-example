@@ -7,15 +7,14 @@ var AJAX = function(){
 		console.log("Objeto XMLHttpRequest detectado");
 		this.httpRequest = new XMLHttpRequest();
 	}else if(window.ActiveXObject){
+		console.log("Objeto ActiveXObject");
 		try{
-			console.log("Objeto ActiveXObject('MSXML2.XMLHTTP') detectado");
 			this.httpRequest = new ActiveXObject("MSXML2.XMLHTTP");
 		}catch(e){
 			try{
-				console.log("Objeto ActiveXObject('Microsoft.XMLHTTP') detectado");
 				this.httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
-			}catch(e){
-				console.log(e.message);
+			}catch(err){
+				console.log("Error: "+e.message);
 			}
 		}
 	}
@@ -46,7 +45,6 @@ AJAX.prototype.requestXML = function(url, func){
 	this.httpRequest.send(null);
 	this.httpRequest.onreadystatechange = function(){
 		if(this.readyState == 4 && this.status == 200){
-			
 			func(this.responseXML);
 		}
 	};
