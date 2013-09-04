@@ -17,15 +17,37 @@ window.onload = function(){
 				ajax.requestXML('personal.xml', function(response){
 					var xml = response;
 					
-					//el metodo getElements regresa un arreglo por eso es que se le especifica el index
-					var personOne = xml.getElementsByTagName('person')[0];
+					var txt = "";
 					
-					var fullName = personOne.getElementsByTagName('full-name')[0];
-					var firstName = fullName.getElementsByTagName('first-name')[0].childNodes[0].nodeValue;
-					var lastName = fullName.getElementsByTagName('last-name')[0].childNodes[0].nodeValue;
+					//el metodo getElements regresa un arreglo de etiquetas o elementos
+					var people = xml.getElementsByTagName('person');
+					var fullName = null;
+					var programmingLanguages = null;
 					
-					//en este caso el primer nodo hijo es el texto y de ese nodo saco su valor
-					var nickname = personOne.getElementsByTagName('nickname')[0].childNodes[0].nodeValue;
+					for(i  =0; i<people.length; i++){
+						fullName = people[i].getElementsByTagName('full-name')[0];
+						txt += fullName.getElementsByTagName('first-name')[0].childNodes[0].nodeValue;
+						txt += ' ' + fullName.getElementsByTagName('last-name')[0].childNodes[0].nodeValue;
+						
+						//En XML se busca accesar a la etiqueta a toda etiqueta que tiene un nodo de texto directamente 
+						txt += '\n' + people[i].getElementsByTagName('nickname')[0].childNodes[0].nodeValue;
+						//childNodes[0].nodeValue se traduce como el valor del primer elemento que es el texto
+						
+						//como el numero de lenguajes es variable obtengo la lista de elementos etiquetados como programming-languages
+						programmingLanguages = people[i].getElementsByTagName('programming-language');
+						for(j=0; j<programmingLanguages.length; j++){
+							txt += '\n' + programmingLanguages[j].childNodes[0].nodeValue;
+						}
+						
+						//Para que no escriba el separador debajo del último registro
+						if(i != people.length-1){
+							txt += '\n';
+							txt += '-------------------------------';
+							txt += '\n';
+						}
+					}	
+					
+					alert(txt);
 					
 				});
 				break;
